@@ -7,6 +7,12 @@ supports Render PORT env var, and allows Vercel CORS origins.
 """
 import os
 import threading
+
+# ── Disable ChromaDB telemetry BEFORE importing chromadb ─────────────────────
+# Prevents posthog circular import crash on Render/production
+os.environ["ANONYMIZED_TELEMETRY"] = "False"
+os.environ["CHROMA_TELEMETRY"]     = "False"
+
 from flask import Flask, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv

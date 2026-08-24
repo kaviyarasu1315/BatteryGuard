@@ -6,6 +6,11 @@ and retrieves relevant context for AI recommendations.
 """
 import os
 import glob
+
+# Disable ChromaDB telemetry before importing chromadb (fixes posthog circular import)
+os.environ["ANONYMIZED_TELEMETRY"] = "False"
+os.environ["CHROMA_TELEMETRY"]     = "False"
+
 import chromadb
 from chromadb import Collection
 from chromadb.config import Settings
