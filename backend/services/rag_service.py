@@ -28,7 +28,11 @@ def _get_client() -> chromadb.ClientAPI:
     global _chroma_client
     if _chroma_client is None:
         os.makedirs(CHROMA_PERSIST_DIR, exist_ok=True)
-        _chroma_client = chromadb.PersistentClient(path=CHROMA_PERSIST_DIR)
+        try:
+            _chroma_client = chromadb.PersistentClient(path=CHROMA_PERSIST_DIR)
+        except Exception:
+            # Fallback to in-memory client if disk persistence fails
+            _chroma_client = chromadb.EphemeralClient()
     return _chroma_client
 
 
@@ -159,11 +163,14 @@ def retrieve_context(query: str, top_k: int = TOP_K_DEFAULT) -> list[dict]:
 
 def get_kb_status() -> dict:
     """Return status of the knowledge base collection."""
-    collection = get_collection(create_if_missing=False)
-    if collection is None:
-        return {'status': 'not_initialized', 'chunk_count': 0}
-    return {
-        'status': 'ready',
-        'chunk_count': collection.count(),
-        'collection': COLLECTION_NAME,
-    }
+    try:
+        collection = get_collection(create_if_missing=False)
+        if collection is None:
+            return {'status': 'not_initialized', 'chunk_count': 0}
+        return {
+            'status': 'ready',
+            'chunk_count': collection.count(),
+            'collection': COLLECTION_NAME,
+        }
+    except Exception as e:
+        return {'status': 'error', 'chunk_count': 0, 'error': str(e)}
