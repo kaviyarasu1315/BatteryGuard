@@ -80,63 +80,60 @@ export default function Overview({ batteryId }) {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Top metrics grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <MetricCard icon={Zap} label="State of Charge" value={summary.soc?.toFixed(1)} unit="%" color="amber" />
-        <MetricCard icon={Battery} label="Health Score" value={summary.health_score?.toFixed(1)} unit="%" color="emerald"
-          sub={STATUS_LABELS[summary.status]} />
-        <MetricCard icon={TrendingDown} label="Capacity" value={summary.capacity?.toFixed(3)} unit="Ah" color="sky"
-          sub={`${summary.capacity_retention?.toFixed(1)}% retained`} />
-        <MetricCard icon={Cpu} label="Internal Resistance" value={summary.internal_resistance?.toFixed(1)} unit="mΩ" color="violet"
-          sub={`+${summary.resistance_growth_pct?.toFixed(1)}% from baseline`} />
-        <MetricCard icon={Thermometer} label="Avg Temperature" value={summary.avg_temperature?.toFixed(1)} unit="°C" color="rose" />
-        <MetricCard icon={Clock} label="Cycle Count" value={summary.cycle_count} unit="" color="amber" />
-        <MetricCard icon={Activity} label="Coulombic Efficiency" value={summary.coulombic_efficiency?.toFixed(2)} unit="%" color="emerald" />
-        <MetricCard icon={Shield} label="Anomalies" value={summary.anomaly_summary?.total} unit=""
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
+        <MetricCard icon={Zap}         label="State of Charge"     value={summary.soc?.toFixed(1)}                  unit="%"  color="amber" />
+        <MetricCard icon={Battery}     label="Health Score"        value={summary.health_score?.toFixed(1)}         unit="%"  color="emerald" sub={STATUS_LABELS[summary.status]} />
+        <MetricCard icon={TrendingDown} label="Capacity"           value={summary.capacity?.toFixed(3)}             unit="Ah" color="sky"     sub={`${summary.capacity_retention?.toFixed(1)}% retained`} />
+        <MetricCard icon={Cpu}         label="Int. Resistance"     value={summary.internal_resistance?.toFixed(1)}  unit="mΩ" color="violet" sub={`+${summary.resistance_growth_pct?.toFixed(1)}% from baseline`} />
+        <MetricCard icon={Thermometer} label="Avg Temperature"     value={summary.avg_temperature?.toFixed(1)}     unit="°C" color="rose" />
+        <MetricCard icon={Clock}       label="Cycle Count"         value={summary.cycle_count}                      unit=""   color="amber" />
+        <MetricCard icon={Activity}    label="Coulombic Eff."      value={summary.coulombic_efficiency?.toFixed(2)} unit="%"  color="emerald" />
+        <MetricCard icon={Shield}      label="Anomalies"           value={summary.anomaly_summary?.total}           unit=""
           color={summary.anomaly_summary?.critical > 0 ? 'rose' : 'amber'}
           sub={`${summary.anomaly_summary?.critical ?? 0} critical`} />
       </div>
 
       {/* SoC Gauge + Analysis */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="glass-card p-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+        <div className="glass-card p-4 md:p-5">
           <SoCGauge soc={summary.soc ?? 0} health={summary.health_score ?? 0} />
         </div>
 
-        <div className="glass-card p-5 md:col-span-2">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="glass-card p-4 md:p-5 md:col-span-2">
+          <div className="flex items-center gap-2 mb-3 md:mb-4">
             <BarChart3 size={15} className="text-amber-500" />
             <span className="text-sm font-semibold text-slate-300">Degradation Analysis</span>
           </div>
           {analysis && (
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3 md:gap-4 text-sm">
+              <div className="space-y-2 md:space-y-3">
                 <div>
                   <p className="text-[11px] text-slate-600 mb-0.5">Initial Capacity</p>
-                  <p className="font-semibold text-slate-200">{analysis.capacity_fade.initial_capacity.toFixed(4)} Ah</p>
+                  <p className="font-semibold text-slate-200 text-sm md:text-base">{analysis.capacity_fade.initial_capacity.toFixed(4)} Ah</p>
                 </div>
                 <div>
                   <p className="text-[11px] text-slate-600 mb-0.5">Total Capacity Fade</p>
-                  <p className="font-semibold text-amber-400">{analysis.capacity_fade.total_fade_pct.toFixed(2)}%</p>
+                  <p className="font-semibold text-amber-400 text-sm md:text-base">{analysis.capacity_fade.total_fade_pct.toFixed(2)}%</p>
                 </div>
                 <div>
                   <p className="text-[11px] text-slate-600 mb-0.5">Fade Rate / 100 Cycles</p>
-                  <p className="font-semibold text-slate-200">{(analysis.capacity_fade.degradation_rate_per_100_cycles * 1000).toFixed(1)} mAh</p>
+                  <p className="font-semibold text-slate-200 text-sm md:text-base">{(analysis.capacity_fade.degradation_rate_per_100_cycles * 1000).toFixed(1)} mAh</p>
                 </div>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2 md:space-y-3">
                 <div>
                   <p className="text-[11px] text-slate-600 mb-0.5">Predicted EOL Cycles</p>
-                  <p className="font-semibold text-emerald-400">+{analysis.capacity_fade.predicted_eol_cycles} cycles</p>
+                  <p className="font-semibold text-emerald-400 text-sm md:text-base">+{analysis.capacity_fade.predicted_eol_cycles} cycles</p>
                 </div>
                 <div>
                   <p className="text-[11px] text-slate-600 mb-0.5">Max Temperature</p>
-                  <p className={`font-semibold ${analysis.temperature.max_c > 45 ? 'text-rose-400' : 'text-slate-200'}`}>
+                  <p className={`font-semibold text-sm md:text-base ${analysis.temperature.max_c > 45 ? 'text-rose-400' : 'text-slate-200'}`}>
                     {analysis.temperature.max_c.toFixed(1)}°C
                   </p>
                 </div>
                 <div>
                   <p className="text-[11px] text-slate-600 mb-0.5">Resistance Growth</p>
-                  <p className="font-semibold text-sky-400">{analysis.resistance.growth_pct.toFixed(1)}%</p>
+                  <p className="font-semibold text-sky-400 text-sm md:text-base">{analysis.resistance.growth_pct.toFixed(1)}%</p>
                 </div>
               </div>
             </div>
@@ -145,11 +142,11 @@ export default function Overview({ batteryId }) {
       </div>
 
       {/* Charts row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="glass-card p-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+        <div className="glass-card p-4 md:p-5">
           <CapacityFadeChart data={trends} />
         </div>
-        <div className="glass-card p-5">
+        <div className="glass-card p-4 md:p-5">
           <InternalResistanceChart data={trends} />
         </div>
       </div>

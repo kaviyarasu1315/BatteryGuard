@@ -39,7 +39,7 @@ export default function Analysis({ batteryId }) {
   return (
     <div className="space-y-5 animate-fade-in">
       {/* Charge curves */}
-      <div className="glass-card p-5">
+      <div className="glass-card p-4 md:p-5">
         <div className="flex items-center gap-3 mb-1">
           <div className="p-2 rounded-lg bg-emerald-500/10">
             <Activity size={15} className="text-emerald-400" />
@@ -50,7 +50,7 @@ export default function Analysis({ batteryId }) {
           </div>
         </div>
         {loading ? (
-          <div className="shimmer h-52 rounded-xl mt-4" />
+          <div className="shimmer h-44 md:h-52 rounded-xl mt-4" />
         ) : curves ? (
           <ChargeCurveChart
             chargeData={curves.charge}
@@ -61,12 +61,12 @@ export default function Analysis({ batteryId }) {
       </div>
 
       {/* Trend charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className="glass-card p-5">
-          {loading ? <div className="shimmer h-52 rounded-xl" /> : <CapacityFadeChart data={trends} />}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+        <div className="glass-card p-4 md:p-5">
+          {loading ? <div className="shimmer h-44 md:h-52 rounded-xl" /> : <CapacityFadeChart data={trends} />}
         </div>
-        <div className="glass-card p-5">
-          {loading ? <div className="shimmer h-52 rounded-xl" /> : <InternalResistanceChart data={trends} />}
+        <div className="glass-card p-4 md:p-5">
+          {loading ? <div className="shimmer h-44 md:h-52 rounded-xl" /> : <InternalResistanceChart data={trends} />}
         </div>
       </div>
 
