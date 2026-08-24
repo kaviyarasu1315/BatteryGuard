@@ -2,8 +2,9 @@ flask==3.0.3
 flask-cors==4.0.1
 openai==1.40.0
 chromadb==0.5.5
+onnxruntime==1.15.1
 pandas
-numpy
-scipy
+numpy<1.25.0
+scipy<1.11.0
 python-dotenv==1.0.1
 gunicorn==22.0.0
