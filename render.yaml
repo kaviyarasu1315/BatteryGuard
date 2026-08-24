@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: batteryguard-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120 --worker-class gthread
+    envVars:
+      - key: NVIDIA_API_KEY
+        sync: false          # Set manually in Render dashboard
+      - key: NVIDIA_BASE_URL
+        value: https://integrate.api.nvidia.com/v1
+      - key: GENERATION_MODEL
+        value: meta/llama-3.1-70b-instruct
+      - key: EMBEDDING_MODEL
+        value: nvidia/nv-embedqa-e5-v5
+      - key: CHROMA_PERSIST_DIR
+        value: ./chroma_db
+      - key: FLASK_DEBUG
+        value: "false"
+    healthCheckPath: /api/health
+    autoDeploy: true
