@@ -6,13 +6,7 @@ and retrieves relevant context for AI recommendations.
 """
 import os
 import glob
-
-# Disable ChromaDB telemetry before importing chromadb (fixes posthog circular import)
-os.environ["ANONYMIZED_TELEMETRY"] = "False"
-os.environ["CHROMA_TELEMETRY"]     = "False"
-
 import chromadb
-from chromadb import Collection
 from chromadb.config import Settings
 
 from services.embeddings import embed_passages, embed_query
@@ -21,23 +15,27 @@ CHROMA_PERSIST_DIR  = os.getenv("CHROMA_PERSIST_DIR",
     os.path.join(os.path.dirname(__file__), '..', 'chroma_db'))
 COLLECTION_NAME     = "battery_knowledge_base"
 KNOWLEDGE_BASE_DIR  = os.path.join(os.path.dirname(__file__), '..', 'knowledge_base')
-CHUNK_SIZE          = 800   # characters per chunk
-CHUNK_OVERLAP       = 150   # character overlap between chunks
+CHUNK_SIZE          = 800
+CHUNK_OVERLAP       = 150
 TOP_K_DEFAULT       = 4
 
-_chroma_client: chromadb.ClientAPI | None = None
-_collection: Collection | None = None
+_chroma_client = None
+_collection    = None
 
 
-def _get_client() -> chromadb.ClientAPI:
+def _get_client():
     global _chroma_client
     if _chroma_client is None:
         os.makedirs(CHROMA_PERSIST_DIR, exist_ok=True)
         try:
-            _chroma_client = chromadb.PersistentClient(path=CHROMA_PERSIST_DIR)
+            _chroma_client = chromadb.Client(Settings(
+                chroma_db_impl="duckdb+parquet",
+                persist_directory=CHROMA_PERSIST_DIR,
+                anonymized_telemetry=False,
+            ))
         except Exception:
-            # Fallback to in-memory client if disk persistence fails
-            _chroma_client = chromadb.EphemeralClient()
+            # Fallback: in-memory client
+            _chroma_client = chromadb.Client()
     return _chroma_client
 
 
