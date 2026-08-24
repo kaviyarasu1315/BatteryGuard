@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const API = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.PROD ? 'https://batteryguard-sckb.onrender.com/api' : '/api',
   timeout: 60000,
   headers: { 'Content-Type': 'application/json' },
 })
